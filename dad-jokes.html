@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dad Jokes</title>
+	<style>
+		/* CSS styles for website */
+		body {
+			background-color: #f2f2f2;
+			font-family: Arial, sans-serif;
+			margin: 0 50px;
+			padding: 0;
+		}
+		h1 {
+			font-size: 36px;
+			text-align: center;
+			margin-top: 50px;
+		}
+		.joke {
+			font-size: 18px;
+			margin-top: 20px;
+			margin-bottom: 20px;
+			padding: 10px;
+			background-color: #ffffff;
+			border-radius: 5px;
+			box-shadow: 2px 2px 5px #c2c2c2;
+			position: relative; /* set position to relative */
+		}
+		.joke button {
+			position: absolute; /* set position to absolute */
+			right: 10px; /* align button to the right */
+			bottom: 10px; /* align button to the bottom */
+			padding: 5px 10px;
+			background-color: #f2f2f2;
+			border: none;
+			border-radius: 5px;
+			box-shadow: 1px 1px 3px #c2c2c2;
+			cursor: pointer;
+		}
+		.joke .punchline {
+			display: none; /* hide punchline by default */
+			margin-top: 20px;
+		}
+		.joke .punchline.show {
+			display: block; /* show punchline when class "show" is added */
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Welcome to Dad Jokes Website</h1>
+		<div class="joke">
+			<p class="setup" id="joke1"></p>
+			<p class="punchline" id="punchline1"></p>
+			<button class="button" onclick="togglePunchline(this)">Why?</button>
+		</div>
+		<div class="joke">
+			<p class="setup" id="joke2"></p>
+			<p class="punchline" id="punchline2"></p>
+			<button class="button" onclick="togglePunchline(this)">Why?</button>
+		</div>
+		<div class="joke">
+			<p class="setup" id="joke3"></p>
+			<p class="punchline" id="punchline3"></p>
+			<button class="button" onclick="togglePunchline(this)">Why?</button>
+		</div>
+	</div>
+
+	<script>
+		// function to toggle punchline display
+		function togglePunchline(button) {
+			var jokeDiv = button.parentElement;
+			var punchline = jokeDiv.querySelector('.punchline');
+			punchline.classList.toggle('show');
+			button.innerHTML = (button.innerHTML === 'Why?') ? 'Hide' : 'Why?';
+		}
+
+		// function to generate random joke
+		function generateJoke() {
+			fetch('https://icanhazdadjoke.com/', {
+				headers: {
+					'Accept': 'application/json'
+				}
+			})
+			.then(response => response.json())
+			.then(data => {
+				var joke = data.joke
+				displayJoke(joke);
+			})
+			.catch(error => console.error(error));
+		}
+
+		// function to display joke on page
+		function displayJoke(joke) {
+			var jokeDiv = document.querySelector('.joke:not(.generated)');
+			if (jokeDiv) {
+				let setup = '';
+				let punchline = '';
+				if(joke.split('?').length < 2){
+					setup = joke.split('.')[0];
+					punchline = joke.split('.')[1];
+				}
+				else{
+					setup = joke.split('?')[0] + '?';
+					punchline = joke.split('?')[1];
+				}
+				jokeDiv.classList.add('generated');
+				jokeDiv.querySelector('.setup').innerHTML = setup;
+				jokeDiv.querySelector('.punchline').innerHTML = punchline;
+				jokeDiv.querySelector('.button').innerHTML = 'Why?';
+			}
+		}
+		// generate a new joke for each joke div on page load
+		document.querySelectorAll('.joke').forEach(jokeDiv => {
+			generateJoke();
+		});
+		</script>
+	</body>
+</html>
+	
